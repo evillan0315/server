@@ -7,7 +7,7 @@ import commandRoutes from "./routes/commands";
 import authRoutes from "./routes/auth";
 import coderRoutes from "./routes/coder";
 import nginxRoutes from "./routes/nginx";
-import socketRoutes from "./routes/socket";
+import prismaRoutes from "./routes/prisma";
 import { initializeWebSocket } from "./services/websocketService";
 import { authenticate } from "./middlewares/authMiddleware";
 
@@ -26,10 +26,11 @@ app.use(express.json());
 
 app.use(authRoutes);
 app.use("/api", authenticate, fileRoutes);
+app.use("/api", authenticate, prismaRoutes);
 app.use("/run", authenticate, commandRoutes);
 app.use("/coder", authenticate, coderRoutes);
 app.use("/nginx", authenticate, nginxRoutes); 
-//app.use("/socket.io/", authenticate, socketRoutes)
+
 initializeWebSocket(server); // Websocket runs on /socket.io/
 
 

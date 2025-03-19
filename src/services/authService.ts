@@ -28,12 +28,9 @@ export const exchangeCodeForToken = async (code: string) => {
 };
 
 export const getUserInfo = async (accessToken: string) => {
-  console.log(accessToken, 'accessToken');
-  console.log(cognitoConfig.userInfoUrl, 'cognitoConfig.userInfoUrl');
   const response = await axios.get(cognitoConfig.userInfoUrl, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
-  console.log(response, 'response');
   return response.data;
 };
 

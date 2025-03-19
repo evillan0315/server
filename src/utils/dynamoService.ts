@@ -11,10 +11,13 @@ const dynamodbClient = new DynamoDBClient({
   },
 });
 
+// Get the table name from environment variables
+const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME!;
+
 export const storeCommandInDynamoDB = async (command: string) => {
   const commandId = new Date().toISOString();
   const putParams = {
-    TableName: "TerminalCommands",
+    TableName: TABLE_NAME,
     Item: {
       commandId: { S: commandId },
       command: { S: command },
@@ -27,7 +30,7 @@ export const storeCommandInDynamoDB = async (command: string) => {
 };
 
 export const getStoredCommands = async () => {
-  const scanParams = { TableName: "TerminalCommands" };
+  const scanParams = { TableName: TABLE_NAME };
   const scanCommand = new ScanCommand(scanParams);
   return await dynamodbClient.send(scanCommand);
 };
