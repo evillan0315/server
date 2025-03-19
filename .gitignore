@@ -47,4 +47,6 @@ jest.config.js
 # Git files
 .git/
 
-docs/
+
+
+
