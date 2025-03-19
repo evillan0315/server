@@ -1,0 +1,64 @@
+{
+  "name": "node-api-ts",
+  "version": "1.0.0",
+  "description": "A backend server built with Express and TypeScript, featuring file management, command execution, WebSocket support, authentication with AWS Cognito, Nginx configuration management, and DynamoDB integration.",
+  "main": "./src/app.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.760.0",
+    "@aws-sdk/client-dynamodb": "^3.767.0",
+    "@aws-sdk/lib-dynamodb": "^3.767.0",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.8.3",
+    "child_process": "^1.0.2",
+    "connect-dynamodb": "^3.0.5",
+    "connect-session-knex": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "fs-extra": "^11.3.0",
+    "handlebars": "^4.7.8",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "jwk-to-pem": "^2.0.7",
+    "node-ssh": "^13.2.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/handlebars": "^4.0.40",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/jwk-to-pem": "^2.0.3",
+    "@types/node": "^22.13.10",
+    "@types/ws": "^8.18.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "author": "Eddie Villanueva",
+  "keywords": [
+    "express",
+    "typescript",
+    "backend",
+    "websocket",
+    "aws-cognito",
+    "nginx",
+    "dynamodb",
+    "file-management",
+    "oauth2"
+  ]
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold text-center text-gray-700">Login</h2>
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" required class="w-full px-4 py-2 mt-1 border rounded-md focus:ring focus:ring-indigo-300">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required class="w-full px-4 py-2 mt-1 border rounded-md focus:ring focus:ring-indigo-300">
+            </div>
+            <button type="submit" class="w-full px-4 py-2 text-white bg-cyan-600 rounded-md hover:bg-cyan-700">Login</button>
+        </form>
+        <p id="errorMessage" class="hidden text-sm text-red-500"></p>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const response = await fetch("https://board-api.duckdns.org/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await response.json();
+            if (response.ok) {
+            	localStorage.setItem("token", data.AuthenticationResult.AccessToken); // Adjust if needed
+        	console.log("Login successful:", data.AuthenticationResult.AccessToken);
+        	const headers = new Headers({
+			"Authorization": `Bearer ${data.AuthenticationResult.AccessToken}`,
+			"Content-Type": "application/json",
+		    });
+                const res = await fetch("https://board-api.duckdns.org/api/files", {
+		        method: "GET",
+		        headers: headers,
+		    });
+		    
+		    const files = await res.json();
+		console.log(files, 'files');
+		document.getElementById("errorMessage").textContent = JSON.stringify(files);
+		document.getElementById("errorMessage").classList.remove("hidden");
+                window.location.href = "https://board-api.duckdns.org/api/files"; // Redirect after successful login
+            } else {
+                document.getElementById("errorMessage").textContent = data.message || "Login failed";
+                document.getElementById("errorMessage").classList.remove("hidden");
+            }
+        });
+    </script>
+</body>
+</html>
+
