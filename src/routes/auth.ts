@@ -37,16 +37,15 @@ router.post("/login", async (req: Request, res: Response) => {
   const { username, password } = req.body;
   try {
     const tokenData = await authenticateUser(username, password);
-    const token = tokenData.AuthenticationResult.AccessToken;
+    const token = tokenData?.AuthenticationResult?.AccessToken;
 
     //const authenticate
-    console.log(token, 'login');
-    //const userInfo = await getUserInfo(token);
+    const userInfo = await getUserInfo(token);
     //console.log(userInfo, 'userInfo');
     //req.session = { ...userInfo, access_token: token }; // Store user info in session
     //console.log(req.session.user, 'req.session.user');
     //res.redirect("/");
-    res.json(tokenData);
+    res.json({...tokenData, user: userInfo });
   } catch (error) {
     res.status(401).json({ error: "Invalid credentials" });
   }

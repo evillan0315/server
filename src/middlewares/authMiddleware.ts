@@ -87,14 +87,13 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 
 
 // Authentication Middleware
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, res: Response | null, next: NextFunction) => {
   let token = req.headers.authorization?.split(" ")[1]; // Extract Bearer token
-  
-  console.log(token, 'token authenticate');
+
   if (!token) {
-    return res.status(401).json({ error: "Unauthorized: No token provided" });
+    return next(new Error("Unauthorized: No token provided")); // WebSocket-friendly error
   }
-  
+
   try {
     const keys = await fetchCognitoKeys();
     
@@ -108,14 +107,12 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     const pem = jwkToPem(key);
 
-    jwt.verify(token, pem, { algorithms: ["RS256"] }, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "Unauthorized: Invalid token" });
-      }
-      (req as any).user = decoded;
-      next();
-    });
-  } catch (error) {
-    return res.status(401).json({ error: "Unauthorized", message: error.message });
+    // ✅ Use synchronous verification instead of the callback
+    const decoded = jwt.verify(token, pem, { algorithms: ["RS256"] });
+
+    (req as any).user = decoded; // Attach user info to request
+    next();
+  } catch (error: any) {
+    return next(new Error("Unauthorized: " + error.message)); 
   }
 };
