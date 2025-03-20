@@ -8,7 +8,31 @@ import * as os from "os";
 import * as fs from "fs";
 import path from "path";
 import process from "process";
+import osu from "os-utils";
+
 let io: SocketIoServer | null = null;
+
+// Function to get system stats
+const getSystemStats = () => {
+    return new Promise((resolve) => {
+        osu.cpuUsage((cpuPercent: number) => {
+            const freeMem = os.freemem();
+            const totalMem = os.totalmem();
+            const memUsedPercent = ((totalMem - freeMem) / totalMem) * 100;
+            const load = os.loadavg();
+
+            resolve({
+                cpuUsage: `${(cpuPercent * 100).toFixed(2)}%`,
+                memoryUsage: `${memUsedPercent.toFixed(2)}%`,
+                loadAvg: {
+                    "1m": load[0].toFixed(2),
+                    "5m": load[1].toFixed(2),
+                    "15m": load[2].toFixed(2),
+                },
+            });
+        });
+    });
+};
 // Function to get system details
 const getSystemDetails = () => {
     return {
@@ -104,9 +128,14 @@ export function initializeWebSocket(server: HttpServer) {
                 socket.emit("error", `Command execution failed: ${error.message}`);
             }
         });
-
+        // Start real-time system monitoring
+        const statsInterval = setInterval(async () => {
+            const stats = await getSystemStats();
+            socket.emit("systemStats", stats);
+        }, 1000);
         socket.on("disconnect", () => {
             console.log("Client disconnected");
+            clearInterval(statsInterval);
         });
     });
 }
