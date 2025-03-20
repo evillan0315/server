@@ -38,7 +38,7 @@ router.post("/login", async (req: Request, res: Response) => {
   try {
     const tokenData = await authenticateUser(username, password);
     const token = tokenData?.AuthenticationResult?.AccessToken;
-
+    console.log(token, 'token');
     //const authenticate
     const userInfo = await getUserInfo(token);
     //console.log(userInfo, 'userInfo');

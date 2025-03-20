@@ -9,6 +9,9 @@ import coderRoutes from "./routes/coder";
 import nginxRoutes from "./routes/nginx";
 import prismaRoutes from "./routes/prisma";
 import monitorRoutes from "./routes/monitor";
+import secretsRoutes from "./routes/secretsRoutes";
+import cognitoUserRoutes from "./routes/cognitoUserRoutes";
+import authenticationRoutes from "./routes/authRoutes";
 import { initializeWebSocket } from "./services/websocketService";
 import { authenticate } from "./middlewares/authMiddleware";
 
@@ -22,17 +25,24 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
-//app.use(cors());
-app.use(express.json());
 
+app.use(express.json());
+initializeWebSocket(server); // Websocket runs on /socket.io/
 app.use(authRoutes);
+// Register Auth routes
+app.use("/api/auth", authenticationRoutes);
+// Register Cognito user routes
+app.use("/api", authenticate, cognitoUserRoutes);
+
 app.use("/api", authenticate, fileRoutes);
 app.use("/api", authenticate, prismaRoutes);
+app.use("/api", authenticate, secretsRoutes);
 app.use("/run", authenticate, commandRoutes);
 app.use("/coder", authenticate, coderRoutes);
 app.use("/nginx", authenticate, nginxRoutes); 
-app.use("/monitor", monitorRoutes); 
-initializeWebSocket(server); // Websocket runs on /socket.io/
+app.use("/monitor", authenticate, monitorRoutes); 
+
+
 
 
 const PORT = process.env.PORT || 5000;

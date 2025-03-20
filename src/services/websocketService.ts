@@ -83,8 +83,16 @@ export function initializeWebSocket(server: HttpServer) {
       console.log(token, 'token initializeWebSocket');
       const req = socket.request as any;
       req.headers.authorization = `Bearer ${token}`;
-      await authenticate(req, {} as any, next);
-      next();
+      await authenticate(req, {
+	  status: () => ({ json: () => {} }), // Fake response object
+	} as any, (err?: any) => {
+	  if (err) {
+	    return next(new Error("Unauthorized"));
+	  }
+	  next();
+	});
+      //await authenticate(req, {} as any, next);
+     // next();
     } catch (error) {
       next(new Error("Authentication error"));
     }
